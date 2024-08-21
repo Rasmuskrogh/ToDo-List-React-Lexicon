@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 
 function App() {
@@ -6,7 +6,10 @@ function App() {
   const [tasks, setTasks] = useState<{ text: string; isChecked: boolean }[]>(
     []
   );
-  //const [isChecked, setisChecked] = useState<boolean>(false);
+  const [counter, setCounter] = useState<{ amount: number; total: number }>({
+    amount: 0,
+    total: 0,
+  });
 
   const onChangeHandler: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setTask(e.target.value);
@@ -25,6 +28,7 @@ function App() {
     const updatedTasks = tasks.map((task, i) =>
       i === index ? { ...task, isChecked: !task.isChecked } : task
     );
+
     setTasks(updatedTasks);
   };
 
@@ -32,6 +36,16 @@ function App() {
     const removeTask = tasks.filter((task, i) => i !== index);
     setTasks(removeTask);
   };
+
+  const updateAmount = () => {
+    const totalTasks = tasks.length;
+    const doneTasks = tasks.filter((task) => task.isChecked).length;
+    setCounter({ amount: doneTasks, total: totalTasks });
+  };
+
+  useEffect(() => {
+    updateAmount();
+  }, [tasks]);
 
   return (
     <>
@@ -68,6 +82,9 @@ function App() {
           </li>
         ))}
       </ul>
+      <h2>
+        Remaing tasks: {counter.amount}/{counter.total}
+      </h2>
     </>
   );
 }
